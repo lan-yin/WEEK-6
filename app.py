@@ -4,14 +4,14 @@ import mysql.connector
 mydb = mysql.connector.connect(
     host = "localhost",
     user = "root",
-    password = "YourPassword",
+    password = "root@2022",
     database = "website"
 )
 mycursor = mydb.cursor()
 
 app = Flask(__name__, static_folder="public", static_url_path="/")  
 app.secret_key = "noOneKnows"
-
+# 這是註解
 
 @app.route("/")
 def index():
@@ -23,32 +23,54 @@ def signup():
     user = request.form["user"]
     password = request.form["password"]
 
-    if checkUser(user):
-        return redirect("/error?message=帳號已經被註冊")
-    else:
-        addUser(name, user, password)
+    sql = "SELECT username FROM member WHERE username = %s"
+    val = (user,)
+    mycursor.execute(sql, val)
+    myResult = mycursor.fetchone()
+    if myResult == None:
+        sql = "INSERT INTO member (name, username, password) VALUES (%s, %s, %s)"
+        val = (name, user, password)
+        mycursor.execute(sql, val)
+        mydb.commit()
         session["username"] = user
         return redirect("/member")
+        
+    else:
+        return redirect("/error?message=帳號已經被註冊")
+        
     
 
 @app.route("/signin", methods = ["POST", "GET"])
 def signin():
     user = request.form["user"]
     password = request.form["password"]
-    if checkMember(user, password):
-        session["username"] = user
-        name = getName(user)
-        return redirect("/member")
-    else:
+    if user == "" or password == "":
         return redirect("/error?message=帳號、或密碼輸入錯誤")
+
+    sql = "SELECT username, password FROM member WHERE username = %s"
+    val = (user,)
+    mycursor.execute(sql, val)
+    myResult = mycursor.fetchone()
+
+    if myResult == None:
+        return redirect("/error?message=帳號、或密碼輸入錯誤")
+    
+    if password == myResult[1]:
+        session["username"] = user
+        return redirect("/member")
+
+        
 
 @app.route("/member")
 def member():
     if "username" in session:
         username = session["username"]
-        if checkUser(username):
-            name = getName(username)
-            return render_template("member.html", name = name)
+        sql = "SELECT name FROM member WHERE username = %s"
+        val = (username,)
+        mycursor.execute(sql, val)
+        myResult = mycursor.fetchone()
+        name = myResult[0]
+        return render_template("member.html", name = name)
     else:
         return redirect("/")
 
@@ -64,38 +86,6 @@ def signout():
     return redirect("/")
 
 
-
-def checkUser(user):
-    mycursor.execute("SELECT username FROM member")
-    myData = mycursor.fetchall()
-    user_list = []
-    for x in myData:
-        user_list.extend(x)
-    if user in user_list:
-        return True
-    else:
-        return False
-
-def addUser(name, user, password):
-    sql = "INSERT INTO member (name, username, password) VALUES (%s, %s, %s)"
-    val = (name, user, password)
-    mycursor.execute(sql, val)
-    mydb.commit()
-
-
-def checkMember(user, password):
-    if checkUser(user):
-        mycursor.execute("SELECT username, password FROM member WHERE username='"+ user +"'")
-        myresult = mycursor.fetchone()
-        if password == myresult[1]:
-            return True
-    else:
-        return False
-
-def getName(user):
-    mycursor.execute("SELECT name FROM member WHERE username='"+ user +"'")
-    myresult = mycursor.fetchone()
-    return myresult[0]
 
 # 啟動網站伺服器
 app.run(port=3000)
