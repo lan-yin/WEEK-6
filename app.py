@@ -33,6 +33,7 @@ def signup():
         mycursor.execute(sql, val)
         mydb.commit()
         session["username"] = user
+        session["name"] = name
         return redirect("/member")
         
     else:
@@ -47,7 +48,7 @@ def signin():
     if user == "" or password == "":
         return redirect("/error?message=帳號、或密碼輸入錯誤")
 
-    sql = "SELECT username, password FROM member WHERE username = %s"
+    sql = "SELECT username, password, name FROM member WHERE username = %s"
     val = (user,)
     mycursor.execute(sql, val)
     myResult = mycursor.fetchone()
@@ -57,6 +58,7 @@ def signin():
     
     if password == myResult[1]:
         session["username"] = user
+        session["name"] = myResult[2]
         return redirect("/member")
     else:
         return redirect("/error?message=帳號、或密碼輸入錯誤")
@@ -66,12 +68,7 @@ def signin():
 @app.route("/member")
 def member():
     if "username" in session:
-        username = session["username"]
-        sql = "SELECT name FROM member WHERE username = %s"
-        val = (username,)
-        mycursor.execute(sql, val)
-        myResult = mycursor.fetchone()
-        name = myResult[0]
+        name = session["name"]
         return render_template("member.html", name = name)
     else:
         return redirect("/")
@@ -85,6 +82,7 @@ def error():
 @app.route("/signout")
 def signout():
     session.pop("username", None)
+    session.pop("name", None)
     return redirect("/")
 
 
