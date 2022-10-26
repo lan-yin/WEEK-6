@@ -29,8 +29,9 @@ CREATE TABLE `member` (
   `password` varchar(255) NOT NULL COMMENT '帳戶密碼',
   `follower_count` int unsigned NOT NULL DEFAULT '0' COMMENT '追蹤者數量',
   `time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '註冊時間',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb3;
+  PRIMARY KEY (`id`),
+  KEY `username_index` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -39,7 +40,7 @@ CREATE TABLE `member` (
 
 LOCK TABLES `member` WRITE;
 /*!40000 ALTER TABLE `member` DISABLE KEYS */;
-INSERT INTO `member` VALUES (1,'test2','test','test',130,'2022-10-19 16:55:14'),(2,'UU','uutest','uucode',87,'2022-10-15 16:55:14'),(3,'YY','yytest','yycode',90,'2022-10-15 13:55:14'),(4,'DUNKY','dtest','dcode',88,'2022-10-20 16:55:14'),(5,'GiantFish','Ftest','Fcode',67,'2022-10-10 16:55:14'),(7,'test6','test6','test6',0,'2022-10-25 14:42:13'),(8,'lan','lan','lan',0,'2022-10-25 16:18:59'),(9,'test1','tes1','tes1',0,'2022-10-25 16:49:58'),(10,'test1','test1','test1',0,'2022-10-25 16:56:49');
+INSERT INTO `member` VALUES (1,'測試','test','test',130,'2022-10-19 16:55:14'),(2,'UU','uutest','uucode',87,'2022-10-15 16:55:14'),(3,'YY','yytest','yycode',90,'2022-10-15 13:55:14'),(4,'DUNKY','dtest','dcode',88,'2022-10-20 16:55:14'),(5,'GiantFish','Ftest','Fcode',67,'2022-10-10 16:55:14'),(7,'測試6號','test6','test6',0,'2022-10-25 14:42:13'),(8,'嵐','lan','lan',0,'2022-10-25 16:18:59'),(10,'測試1號','test1','test1',0,'2022-10-25 16:56:49'),(11,'拾貳','12','12',0,'2022-10-25 22:45:02');
 /*!40000 ALTER TABLE `member` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -81,4 +82,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-10-25 17:04:08
+-- Dump completed on 2022-10-26  8:28:39

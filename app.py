@@ -4,7 +4,7 @@ import mysql.connector
 mydb = mysql.connector.connect(
     host = "localhost",
     user = "root",
-    password = "",
+    password = "root@2022",
     database = "website"
 )
 mycursor = mydb.cursor()
@@ -58,6 +58,8 @@ def signin():
     if password == myResult[1]:
         session["username"] = user
         return redirect("/member")
+    else:
+        return redirect("/error?message=帳號、或密碼輸入錯誤")
 
         
 
